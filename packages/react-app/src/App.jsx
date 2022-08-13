@@ -173,6 +173,7 @@ function App(props) {
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
+  const [stakeAmount, setStakeAmount] = useState(0);
 
   const logoutOfWeb3Modal = async () => {
     await web3Modal.clearCachedProvider();
@@ -252,8 +253,8 @@ function App(props) {
   );
   if (DEBUG) console.log("💵 stakerContractBalance", stakerContractBalance);
 
-  const rewardRatePerSecond = useContractReader(readContracts, "Staker", "rewardRatePerSecond");
-  console.log("💵 Reward Rate:", rewardRatePerSecond);
+  const rewardRate = useContractReader(readContracts, "Staker", "rewardRate");
+  console.log("💵 Reward Rate:", rewardRate);
 
   // ** keep track of a variable from the contract in the local React state:
   const balanceStaked = useContractReader(readContracts, "Staker", "balances", [address]);
@@ -525,8 +526,8 @@ function App(props) {
             <Divider />
 
             <div style={{ padding: 8, marginTop: 16 }}>
-              <div>Reward Rate Per Second:</div>
-              <Balance balance={rewardRatePerSecond} fontSize={64} /> ETH
+              <div>Reward Rate:</div>
+              <Balance balance={rewardRate} fontSize={64} /> ETH
             </div>
 
             <Divider />
@@ -581,11 +582,12 @@ function App(props) {
               <Button
                 type={balanceStaked ? "success" : "primary"}
                 onClick={() => {
-                  tx(writeContracts.Staker.stake({ value: ethers.utils.parseEther("0.5") }));
+                  tx(writeContracts.Staker.stake({ value: ethers.utils.parseEther(String(stakeAmount)) }));
                 }}
               >
-                🥩 Stake 0.5 ether!
+                🥩 Stake ether!
               </Button>
+              <input type="number" onChange={(e)=>setStakeAmount(e.target.value)} value={stakeAmount}/>
             </div>
 
             {/*

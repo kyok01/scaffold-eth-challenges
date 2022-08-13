@@ -9,4 +9,8 @@ contract ExampleExternalContract {
     completed = true;
   }
 
+  function withdraw(uint256 amount) public {
+        payable(msg.sender).transfer(amount);
+    }
+
 }
